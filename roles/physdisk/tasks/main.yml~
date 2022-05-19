@@ -1,11 +1,9 @@
 ---
 # tasks file for physdisk
-# Gather package facts to check for installed software
 - name: Get Package Facts
   package_facts:
     manager: auto
 
-# Setup the HP repo - sane for internet connected machines
 - name: Establish hp.repo
   blockinfile:
     path: /etc/yum.repos.d/hp.repo
@@ -30,7 +28,6 @@
       - "'ssacli' not in ansible_facts.packages"
       - "ansible_system_vendor != 'vmware'"
 
-# Install ssacli from HP Repo - if avail
 - name: Install ssacli if required
   yum:
     name: ssacli
@@ -40,7 +37,6 @@
     - "'ssacli' not in ansible_facts.packages"
     - "ansible_system_vendor != 'vmware'"
 
-# Run ssacli, count disks that comprise array
 - name: Check physical disk count
   shell:
     " /sbin/ssacli ctrl all show config | grep physicaldrive | wc -l "
@@ -49,5 +45,4 @@
     - "'ssacli' in ansible_facts.packages"
     - "ansible_system_vendor != 'vmware'"
 
-# Display detected physical disk count
 - debug: msg="Disk count = {{disk_count.stdout}}"
